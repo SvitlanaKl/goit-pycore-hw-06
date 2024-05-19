@@ -10,49 +10,60 @@ class Field:
         return str(self.value)
 
 class Name(Field):
-    # реалізація класу
-		pass
+    pass
 
 class Phone(Field):
-    # реалізація класу
-		pass
-# валідація номеру  перевірка на 10 цифр
+    def __init__(self, value):
+        # валідація номеру  перевірка на 10 цифр
+        if not value.isdigit() or len(value) != 10:
+            raise ValueError("Phone number must be 10 digits.") 
+        # Виклик ініціалізації базового класу
+        super().__init__(value)
+
 
 class Record:
     def __init__(self, name):
         self.name = Name(name)
         self.phones = []
     
-    def add_phone(self):
-        pass
+    def add_phone(self, phone):
+        self.phones.append(Phone(phone))
     
-    def remove_phone(self):
-        pass
+    def remove_phone(self, phone):
+        phone_to_remove = next((number for number in self.phones if number.value == phone), None)
+        if phone_to_remove:
+            self.phones.remove(phone_to_remove)
 
-    def find_phone(self):
-        pass
+    def find_phone(self, phone):
+        return next((number for number in self.phones if number.value == phone), None)
 
-    def edit_phone(self):
-        pass
-
-    # реалізація класу
-
+    def edit_phone(self, old_phone, new_phone):
+        phone_to_edit = self.find_phone(old_phone)
+        if phone_to_edit:
+            self.phones.remove(phone_to_edit)
+            self.add_phone(new_phone)
+   
     def __str__(self):
-        return f"Contact name: {self.name.value}, phones: {'; '.join(p.value for p in self.phones)}"
+        return f"Contact name: {self.name.value}, phones: {'; '.join(number.value for number in self.phones)}"
 
 class AddressBook(UserDict):
-    # реалізація класу
-    def add_record(self):
-        pass
+
+    def add_record(self, record):
+        self.data[record.name.value] = record
     
-    def find(self):
-        pass
+    def find(self, name):
+        return self.data.get(name, None)
     
-    def delete(self):
-        pass
+    def delete(self, name):
+        removed_record = self.data.pop(name, None)
+        if removed_record is None:
+            print(f"Record with name '{name}' not found.")
+        else:
+            print(f"Record with name '{name}' has been deleted.")
 
 if __name__ == '__main__':
-        # Створення нової адресної книги
+    
+    # Створення нової адресної книги
     book = AddressBook()
 
     # Створення запису для John
